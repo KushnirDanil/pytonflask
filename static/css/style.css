@@ -21,12 +21,45 @@
 .menu a:hover{
     background-color: rgb(100, 100, 100)
 }
+/* --- main --- */
 
-/* logo */
+/* --- logo --- */
 
 .logo{
     height: 650px;
-    background-image: url('../images/aleksandr.jpg');
-    background-size: cover;
+    background-image: url('../images/aleksandr.jpg') ;
+    background-size: cover ;
+    text-align: center ;
+}
+
+.logo h1{
+    color: white ;
+    font-size: 74px ;
+    padding-top: 140px ;
+
+}
+
+.logo p {
+    color: white ;
+     padding-top: 90px ;
+     font-size: 30px
+}
+
+.about{
+    background-color: black ;
+    color: white ;
+    font-size: 26px ;
+    line-height: 40px ;
+    text-ident: 30px ;
+    text-aline: justify ;
+    padding: 80px 30px ;
+}
+
+/* --- footer --- */
+footer{
+    background-color: black;
+    color: white;
+    font-size: 15 px;
     text-align: center;
+    padding: 30px
 }
