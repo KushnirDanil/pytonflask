@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
         <title>Rediscover the world</title>
     {% endif %}
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -21,9 +23,11 @@
 
                 <!-- login -->
                 <li><a href="/login">Login</a></li>
-
             </ul>
         </nav>
+        <div class="welcome_user">
+            {% block welcom %}{% endblock %}
+        </div>
     </header>
     <main>
 

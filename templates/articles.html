@@ -1,9 +1,17 @@
 {% extends "layout.html" %}
 
 {% block content %}
+    <section class="logo_articles">
+        <h1>discover<br> something new</h1>
+    </section>
 
-    <!-- В роботі -->
+    <section>
+        <h2>open new city</h2>
+        {% for article in articles %}
+        <h3>
+            <a class="" href="/details">{{ article }}</a>
+        </h3>
+        {% endfor %}
+    </section>
 
-    <h1> Список статей</h1>
-
-{% endblock content%}
+{% endblock content %}
