@@ -1,5 +1,7 @@
 # pip install flask-sqlalchemy
+from crypt import methods
 from datetime import datetime
+from pyexpat.errors import messages
 
 from flask import Flask, render_template
 from flask import  request
@@ -36,6 +38,18 @@ class Posts(db.Model):
     continent = db.Column(db.String(255), nullable=False)
     created_on = db.Column(db.Date(), default=datetime.utcnow)
 
+
+# Інший варіант
+
+#    def __init__(self, title,text):
+#        self.post_name = title
+#        self.post_text =  text + 'New tesxt'
+#        ...
+
+#    row = Posts(title=post_text,
+#               ...)
+
+
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -48,6 +62,7 @@ def index():
 
 @app.route('/login')
 def login():
+    message = 'Enter you login and password'
     return render_template('login.html')
 
 @app.route('/about')
@@ -56,15 +71,43 @@ def about():
 
 @app.route('/articles')
 def articles():
-    new_articles = ['How to avoid expensive travel mistakes', 'Top 5 places to experience supernatural forces',
-                    'Three wonderfully bizarre Mexican festivals', 'The 20 greenest destinations on Earth',
-                    'How to survive on a desert island']
-    return render_template('articles.html', articles=new_articles)
+    articles = Posts.query.all()
+    return render_template('articles.html',
+                           articles=articles)
 
-@app.route('/add_post')
+@app.route('/add_post', methods=['GET'])
 def add_post():
+
     return render_template('add_post.html')
 
+@app.route('/add_post',  methods=['POST'])
+def add_post_form():
+    post_name = request.form['text']
+    post_text = request.form['text']
+    post_image = request.form['URL']
+    continent = request.form['continent']
+
+    row = Posts(post_name=post_name,
+                post_text=post_text,
+                post_image=post_image,
+                continent=continent)
+    db.session.add(row)
+    db.session.commit()
+
+    return render_template('add_post.html')
+
+@app.route('/delete_post', methods=['POST'])
+def delete_post():
+    if request.method == 'POST':
+        id_list = request.form.getlist('id')
+        for id in id_list:
+            row = Posts.query.filter_by(id=id).first()
+            db.session.delete()
+
+        db.session.commit()
+
+    articles = Posts.query.all()
+    render_template('delete_post.html', articles=articles)
 
 @app.route('/details')
 def details():
