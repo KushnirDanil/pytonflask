@@ -2,19 +2,18 @@
 from crypt import methods
 from datetime import datetime
 from pyexpat.errors import messages
-
-from flask import Flask, render_template
-from flask import  request
+from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-
 # 1. Налаштування
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.secret_key='aaieLF0AKDtpzQzpJ93oMAx-rxF1R_w2KPdb_uHrSjw'
 
 # Запуск бази даних
 # database = SQLAlchemy
@@ -58,12 +57,33 @@ class Posts(db.Model):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    x = session.get('username')
+    return render_template('index.html', username=x)
 
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login():
     message = 'Enter you login and password'
-    return render_template('login.html')
+    return render_template('login.html', message=message)
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    email = request.form['email']
+    password = request.form['password']
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        message = 'Enter correct email'
+        return render_template('login.html', message=message)
+    else:
+        if user.password != password:
+            message = 'Enter correct password'
+            return render_template('login.html', message=message)
+        else:
+            session['username'] = user.username
+
+            return redirect('/')
+            #return render_template('index.html')
 
 @app.route('/about')
 def about():
@@ -77,11 +97,16 @@ def articles():
 
 @app.route('/add_post', methods=['GET'])
 def add_post():
+    if not session.get('username'):
+        return redirect('/login')
 
     return render_template('add_post.html')
 
 @app.route('/add_post',  methods=['POST'])
 def add_post_form():
+    if not session.get('username'):
+        return redirect('/login')
+
     post_name = request.form['text']
     post_text = request.form['text']
     post_image = request.form['URL']
@@ -96,8 +121,11 @@ def add_post_form():
 
     return render_template('add_post.html')
 
-@app.route('/delete_post', methods=['POST'])
+@app.route('/delete_post', methods=['GET', 'POST'])
 def delete_post():
+    if not session.get('username'):
+        return redirect('/login')
+
     if request.method == 'POST':
         id_list = request.form.getlist('id')
         for id in id_list:
@@ -107,7 +135,7 @@ def delete_post():
         db.session.commit()
 
     articles = Posts.query.all()
-    render_template('delete_post.html', articles=articles)
+    return render_template('delete_post.html', articles=articles)
 
 @app.route('/details')
 def details():
@@ -115,6 +143,9 @@ def details():
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
+    if not session.get('username'):
+        return redirect('/login')
+
     if request.method == 'POST':
 
         username = request.form['username']
@@ -129,6 +160,16 @@ def add_user():
     else:
         return render_template('add_user.html')
 
+
+@app.route('/logout')
+def logout():
+    if not session.get('username'):
+        return redirect('/login')
+
+    session.clear()
+    return redirect('/')
+
 # Лише для локаотного сервера (закоментувати)
 if __name__ == '__main__':
     app.run(debug=True)
+

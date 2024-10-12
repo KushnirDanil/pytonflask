@@ -20,11 +20,15 @@
                 <li><a href="/">MAIN</a></li>
                 <li><a href="/articles">Articles</a></li>
                 <li><a href="/about">About</a></li>
-                <li><a href="/add_user">User</a></li>
-                <li><a href="/add_post">Post</a></li>
-
-                <!-- login -->
-                <li><a href="/login">Login</a></li>
+                {% if username %}
+                    <li><a href="/add_user">User</a></li>
+                    <li><a href="/add_post">Post</a></li>
+                    <li><a href="/delete_post">Delete</a></li>
+                    <li><a href="/logout">Log out</a></li>
+                {% else %}
+                    <!-- login -->
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
             </ul>
         </nav>
         <div class="welcome_user">
